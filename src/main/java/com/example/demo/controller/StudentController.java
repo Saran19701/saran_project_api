@@ -40,11 +40,12 @@ import com.example.demo.model.Student;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.StudentService;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @CrossOrigin("http://localhost:5173")   // Allow React frontend to access
@@ -62,14 +63,28 @@ public class StudentController {
     }
 
     // ============================================================
-    // 1. GET ALL STUDENTS
+    // 1. GET ALL STUDENTS (with Pagination)
     // ============================================================
-    // URL:    GET http://localhost:8080/api/students
-    // React:  fetch("http://localhost:8080/api/students")
-    // SQL:    SELECT * FROM students
+    // URL:    GET http://localhost:8080/api/students?page=0&size=5
+    // React:  fetch("/api/students?page=0&size=5")
+    // SQL:    SELECT * FROM students LIMIT 5 OFFSET 0
+    //
+    // HOW Pageable WORKS:
+    //   Spring automatically reads ?page=0&size=5 from the URL
+    //   and injects them into the Pageable parameter for you.
+    //   No manual parsing needed!
+    //
+    // Page<Student> RESPONSE (JSON sent to React):
+    // {
+    //   "content":       [...5 students...],   ← actual records
+    //   "totalPages":    10,                   ← total pages
+    //   "totalElements": 50,                   ← total records in DB
+    //   "number":        0,                    ← current page (0-based)
+    //   "size":          5                     ← page size
+    // }
     @GetMapping
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public Page<Student> getAllStudents(Pageable pageable) {
+        return studentRepository.findAll(pageable);
     }
 
     // ============================================================

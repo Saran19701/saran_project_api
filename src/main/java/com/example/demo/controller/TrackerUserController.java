@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.TrackerUser;
 import com.example.demo.service.TrackerUserService;
+
+import java.util.List;
 
 // import java.util.Map;
 
@@ -21,6 +24,12 @@ public class TrackerUserController {
 
     public TrackerUserController(TrackerUserService trackerUserService) {
         this.trackerUserService = trackerUserService;
+    }
+
+    @GetMapping("/get_data")
+    public ResponseEntity<List<TrackerUser>> getData() {
+        List<TrackerUser> users = trackerUserService.getAllActiveUsers();
+        return ResponseEntity.ok(users);
     }
 
     // @PostMapping("/login")
